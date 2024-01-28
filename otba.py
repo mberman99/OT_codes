@@ -74,13 +74,13 @@ if __name__ == "__main__":
     from skimage import data, io, segmentation, color
     from skimage.future import graph
 
-    mda = xry.open_dataset(r'/data/keeling/a/melinda3/NASA/MERRA2_data/MERRA2_400.inst3_3d_asm_Nv.20190211.nc4')
+    mda = xry.open_dataset(r'/data/keeling/a/melinda3/NASA/MERRA2_data/MERRA2_400.inst3_3d_asm_Nv.20181102.nc4')
     #mda = xry.open_dataset('https://goldsmr5.gesdisc.eosdis.nasa.gov/dods/M2I3NVASM', engine='netcdf4')
-    merra_trop = xry.open_dataset('/data/jtrapp/a/jamessg3/MERRA2/MERRA2_400.inst1_2d_asm_Nx.20190211.nc4', engine = 'netcdf4')
+    merra_trop = xry.open_dataset('/data/jtrapp/a/jamessg3/MERRA2/MERRA2_400.inst1_2d_asm_Nx.20181102.nc4', engine = 'netcdf4')
 
 
     import glob
-    datestr='20190211'
+    datestr='20181102'
     ihour='20'
     ihour2 = '19'
     ihour3 = '21'
@@ -395,9 +395,11 @@ if __name__ == "__main__":
        
         
         #Convert the OT height in km to a pressure level
-        ot_height_m = ot_height * 1000 
-        ot_pres = mpcalc.height_to_pressure_std(ot_height_m * units.meter)
-        ot_pres = ot_pres.magnitude
+        #ot_height_m = ot_height * 1000 
+        #ot_pres = mpcalc.height_to_pressure_std(ot_height_m * units.meter)
+        #ot_pres = ot_pres.magnitude
+
+        ot_pres = trop - 50
 
 
         if ot_pres < trop:
@@ -470,7 +472,7 @@ if __name__ == "__main__":
 
                 press = pl_interp[ot_pres_idx:el_pres_idx]
                 nspace = (max(press) - min(press))/500
-                new_pr_coords = np.linspace(min(press), max(press), np.int32(nspace))
+                new_pr_coords = np.arange(min(press), max(press), 500)
                 temp_interp = interpolate.interp1d(press, t_interp[ot_pres_idx:el_pres_idx].flatten())
                 t_int = temp_interp(new_pr_coords)
                 rh_interp2 = interpolate.interp1d(press, rh_interp[ot_pres_idx:el_pres_idx].flatten())
@@ -512,7 +514,7 @@ if __name__ == "__main__":
                 pres_vals2 = []
                 press = pl_interp[ot_pres_idx-2:el_pres_idx]
                 nspace = (max(press) - min(press))/500
-                new_pr_coords = np.linspace(min(press), max(press), np.int32(nspace))
+                new_pr_coords = np.arange(min(press), max(press), 500)
                 temp_interp = interpolate.interp1d(press, t_interp[ot_pres_idx-2:el_pres_idx].flatten())
                 t_int = temp_interp(new_pr_coords)
                 rh_interp2 = interpolate.interp1d(press, rh_interp[ot_pres_idx-2:el_pres_idx].flatten())
@@ -839,4 +841,4 @@ if __name__ == "__main__":
 
 
 
-    gpd_out.to_csv('./11feb_allday_out_filtered.csv')
+    gpd_out.to_csv('./02nov_allday_out_final.csv')
